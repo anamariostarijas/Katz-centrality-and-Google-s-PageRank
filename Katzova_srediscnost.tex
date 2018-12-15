@@ -1,0 +1,29 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{commath}
+
+ 
+\title{Katzova središčnosti}
+\author{Tina Ražić \thanks{Anamari OŠtarijaš}}
+\date{december 2018}
+ 
+\begin{document}
+ 
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\section{Uvod}
+Katzova središčnost je ena izmed številnih mer središčnosti na grafih. Predstavil jo je Leo Katz leta 1953. Uporabljamo jo pri analiziranju socialnih omrežji, saj lahko z njo izmerimo relativno stopnjo vpliva posameznega igralca, ki predstavlja eno vozlišče v grafu. Tipično mere središčnosti pri merjenju upoštevajo le najkrajšo pot med dvema igralcema, Katzova središčnost pa meri vpliv glede na celotno število sprehodov med dvema igralcema. 
+ 
+\section{Katzova središčnost}
+Katzova središčnost izmeri vpliv igralca v omrežju, tako da upošteva direktne sosede igralca in vse druge igralce, ki so posredno povezani s tem igralcem, preko njegovih direktnih sosedov. Naj bo naše omrežje graf z $n$ vozlišči oziroma igralci. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{d}$ izračunamo težo povezave vozlišča z durgim vozliščem, pri čemer je $d$ število povezav, ki ju povezuje. Naš graf predstavimo z matriko sosednosti A, torej element matrike $a_{ij}$ ima vrednost $1$, če je vozlišče $i$ povezano z vozliščem $j$ in $0$, če nista povezana. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer: če je v matriki $A^{3}$ element $a_{2,5}  = 1,$pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje.
+Označimo s $C_{Katz}(i)$ Katzovo središčnost vozlišča $i$. Potem lahko izračunamo središčnost na sledeči način:
+$$
+C_{Katz}(i) = \sum_{k=1}^{\infty}\sum_{j=1}^{n}\alpha^{k}(A^{k})_{ij}
+$$
+Pri izbiri $\alpha$ moramo upoštevati zgornjo omejitev $$\alpha < \frac{1}{\abs{\lambda_{max}}}.$$
+
+\end{document}
+
+
