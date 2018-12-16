@@ -54,7 +54,7 @@ Ljubljana, december 2018
 \newpage
 \section{Opis projekta}
 \hspace{4.8mm}Kompleksna omrežja lahko analiziramo z uporabo različnih kvantitetnih merjenj, imenujemo jih tudi mere središčnosti,  ki intuitivno zajamejo pomembnost določenih vozlišč. 
-V projektu bova implementirali Googlov PageRank in njegovega starejšega brata Katzovo središčnost z uporabo potenčne metode. Na različnih grafih (tudi socialnih omrežjih) bova analizirali in primerjali, kako merjenji razvrstita vozlišča po pomembnosti. 
+V projektu bova implementirali Googlov PageRank in Katzovo središčnost z uporabo potenčne metode. Na različnih grafih (tudi socialnih omrežjih) bova analizirali in primerjali, kako merjenji razvrstita vozlišča po pomembnosti. 
 
 \section{Katzova središčnost}
 \subsection{Uvod}
@@ -85,7 +85,7 @@ Q_{ij} =
 	\end{array}
 \right. \]
 \\
-Torej ima vrstica$i$ neničelne elemente na mestih inlinkov $i$. Podobno ima stolpec $j$ neničelne elemente enake $N_j$ na mestih  outlinkov $j$, vsota vseh elementov v stolpcu je enaka $1$. definicija je ekvivalentna skalarnem produktu vrstice $i$ in vektorja $r$, ki vsebuje range vseh strani.\\
+Torej ima vrstica $i$ neničelne elemente na mestih inlinkov $i$. Podobno ima stolpec $j$ neničelne elemente enake $N_j$ na mestih  outlinkov $j$, vsota vseh elementov v stolpcu je enaka $1$. definicija je ekvivalentna skalarnem produktu vrstice $i$ in vektorja $r$, ki vsebuje range vseh strani.\\
 Enačbo sedaj lahko zapišemo v matrični obliki:
 $$ \lambda r = Qr,     \qquad \lambda = 1,$$
 Tako dobimo, da je $r$ lastni vektor matrike $Q$ z lastno vrednostjo $\lambda = 1$. Sedaj preprosto vidimo, da je iteracija ekvivalentna
@@ -94,7 +94,7 @@ kar je power metoda za izračun lastnega vektorja.\\
 \\ \textbf{Problem}: Ni jasno, da je pagerank dobro definiran, saj ne vemo ali obstaja lastna vrednost enaka 1. Pomagamo si s teorijo Markovske verige.\\
 \\Obstaja interpretacija pageranka z naključnimi sprehodi. Predpostavimo, da uporabnik na spletni strani izbere naslednjo stran  med outlinki z enako verjetnostjo. Markovska veriga je slučajni proces v katerem je naslednje stanje določeno le s trenutnim stanjem, proces nima spomina. Prehodna matrika Markovske verige je $Q^T$.\\
 Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slučajnega sprehoda ne sme imeti strani brez outlinkov (taka stran bi imela stolpec iz ničel v $Q$). Torej je model prilagojen tako, da so ničelni stolpci nadomeščeni s konstantnimi vrednostmi na vseh mestih. To pomeni, da je enaka verjetnost, da pridemo na katero koli drugo spletno stran. \\ 
-Definiramo vektorje: \\
+\\Definiramo vektorje: \\
 \[
 d_j = 
 \left \{
@@ -105,17 +105,17 @@ d_j =
 \right. \]
 za $j = 1, .., n$ in
 $$e = [1 … 1] ^T \in \mathbb{R}^n.$$
-Prilagojena matrika je definirana s $ P = Q + \frac{1}{n}ed^T$. \\
+Prilagojena matrika je definirana s $ P = Q + \frac{1}{n}ed^T$. 
 S to prilagoditvijo je matrika $P$ desna stohastična matrika; vsi elementi so nenegativni in elementi vsakega stolpca se seštejejo v 1. \\
-Desna stohastična matrika $P$ zadošča 
+\\Desna stohastična matrika $P$ zadošča 
 $$e^TP = e^T$$. \\
 Želimo definirati pagerank vektor kot enoličen lastni vektor matrike $P$ z lastno vrednostjo $1$:
 $$Pr=r$$. \\
-Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$, $r_i$, je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi). V tem primeru ima matrika več lastnih vrednosti enakih $1$. \\ Edinstvenost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč slastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
-Zaradi velikosti spleta je matrika linkov $P$ reducibilna, torej pagerank lastni vektor ni dobro definiran. Da si zagotovimo ireducibilnost, umetno dodamo linke iz vsake spletne strani do vseh drugih. To lahko storimo, če vzamemo konveksno kombinacijo $P$ in matrike ranga 1:
+Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$ ($r_i$) je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi, v tem primeru ima matrika več lastnih vrednosti enakih $1$). \\ Edinstvenost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč slastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
+\\Zaradi velikosti spleta je matrika linkov $P$ reducibilna, torej pagerank lastni vektor ni dobro definiran. Da si zagotovimo ireducibilnost, umetno dodamo linke iz vsake spletne strani do vseh drugih. To lahko storimo, če vzamemo konveksno kombinacijo $P$ in matrike ranga 1:
 $$A=\alpha P + (1-\alpha)\frac{1}{n}ee^T,$$
-Za nek $\alpha$, ki zadošča $0 \leq \alpha \leq 1$. Matrika $A$ je stolpčno stohastična. Razlaga naključnega sprehoda dodatnega rang-1 izraza je, da bo uporabnik na vsakem časovnem koraku skočil na naključno stran z verjetnostjo $1- \alpha$.
-Za konvergenco numeričnega algoritma za lastno vrednost je pomembno da vemo, kako so s prilagoditvijo ranga-1 spremenjene lastne vrednosti.\\
+za nek $\alpha$, ki zadošča $0 \leq \alpha \leq 1$. Matrika $A$ je desna stohastična. Razlaga naključnega sprehoda dodatnega rang-1 izraza je, da bo uporabnik na vsakem časovnem koraku skočil na naključno stran z verjetnostjo $1- \alpha$.
+Za konvergenco numeričnega algoritma za lastno vrednost je pomembno, da vemo, kako so s prilagoditvijo ranga-1 spremenjene lastne vrednosti.\\
 \\ \textbf{Izrek:} \textit{Naj bodo lastne vrednosti desne stohastične matrike $P$ enake ${1, \lambda_2, \lambda_3, … , \lambda_n}$. Potem so lastne vrednosti $A=\alpha P + (1- \alpha) \frac{1}{n}ee^T$ enake ${1, \alpha \lambda_2, \alpha \lambda_3, … , \alpha \lambda_n}$.}\\
 \\
 Ta izrek nam pove, da tudi če ima $P$ več lastnih vrednosti enakih 1, kar je po navadi res, bo druga največja lastna vrednost matrike $A$ enaka $\alpha$. \\
@@ -136,6 +136,10 @@ Prepostavimo, da imamo dan začetni približek $r{(0)}$. \\
 \end{center}
 Konvergenca je odvisna od porazdelitve lastnih vrednosti. Če je druga največja lastna vrednost blizu 1, bo iteracija zelo počasna. To na srečo ne velja za Google matriko. Vektor normaliziramo, da ne bi z iteracijami postali preveliki ali premajhni, posledično nereprezentativni s števili s plavajočo vejico. To v resnici ni potrebno, saj se v primeru desnih stohastičnih matrik temu izognemo. 
 En izračun pageranka lahko traja več dni.
+
+\section{Načrt dela}
+\hspace{4.8mm}Najprej bova oba algoritma preizkusili na manjših grafih za zagotovitev pravilnosti, kasneje pa še na omrežjih. Primerjali bova razlike v rangiranju in čase izračunov na večjih in manjših grafih, da vidiva, kako velikost omrežja vpliva na vsako metodo. \\
+Algoritma bova napisali v programu Python s pomočjo knjižnice NetworkX za generiranje omrežij. 
 
 
 
