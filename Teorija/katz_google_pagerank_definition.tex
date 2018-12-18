@@ -14,14 +14,6 @@
 \usepackage{commath}
 
 
-%BAZE
-%https://rdrr.io/cran/rTensor/man/faces_tnsr.html#heading-1
-%http://www.cad.zju.edu.cn/home/dengcai/Data/FaceData.html
-
-%VIRI
-%http://web.cs.ucla.edu/~dt/papers/icpr02/icpr02.pdf
-% TELO DOKUMENTA
-
 \begin{document}
 \thispagestyle{empty}
 
@@ -85,12 +77,12 @@ Q_{ij} =
 	\end{array}
 \right. \]
 \\
-Torej ima vrstica $i$ neničelne elemente na mestih inlinkov $i$. Podobno ima stolpec $j$ neničelne elemente enake $N_j$ na mestih  outlinkov $j$, vsota vseh elementov v stolpcu je enaka $1$. definicija je ekvivalentna skalarnem produktu vrstice $i$ in vektorja $r$, ki vsebuje range vseh strani.\\
+Torej ima vrstica $i$ neničelne elemente na mestih inlinkov $i$. Podobno ima stolpec $j$ neničelne elemente enake $N_j$ na mestih  outlinkov $j$, vsota vseh elementov v stolpcu je enaka $1$. Definicija je ekvivalentna skalarnem produktu vrstice $i$ in vektorja $r$, ki vsebuje range vseh strani.\\
 Enačbo sedaj lahko zapišemo v matrični obliki:
 $$ \lambda r = Qr,     \qquad \lambda = 1,$$
 Tako dobimo, da je $r$ lastni vektor matrike $Q$ z lastno vrednostjo $\lambda = 1$. Sedaj preprosto vidimo, da je iteracija ekvivalentna
-$$r{(k+1)} = Qr{(k)},\qquad  k=0,1,… ,$$
-kar je power metoda za izračun lastnega vektorja.\\
+$$r^{(k+1)} = Qr^{(k)},\qquad  k=0,1,… ,$$
+kar je potenčna metoda za izračun lastnega vektorja.\\
 \\ \textbf{Problem}: Ni jasno, da je pagerank dobro definiran, saj ne vemo ali obstaja lastna vrednost enaka 1. Pomagamo si s teorijo Markovske verige.\\
 \\Obstaja interpretacija pageranka z naključnimi sprehodi. Predpostavimo, da uporabnik na spletni strani izbere naslednjo stran  med outlinki z enako verjetnostjo. Markovska veriga je slučajni proces v katerem je naslednje stanje določeno le s trenutnim stanjem, proces nima spomina. Prehodna matrika Markovske verige je $Q^T$.\\
 Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slučajnega sprehoda ne sme imeti strani brez outlinkov (taka stran bi imela stolpec iz ničel v $Q$). Torej je model prilagojen tako, da so ničelni stolpci nadomeščeni s konstantnimi vrednostmi na vseh mestih. To pomeni, da je enaka verjetnost, da pridemo na katero koli drugo spletno stran. \\ 
