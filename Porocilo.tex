@@ -1,0 +1,65 @@
+% PREAMBULA DOKUMENTA
+\documentclass[a4paper]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage {lmodern}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage{commath}
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{figure}[t]
+\begin{center} 
+\includegraphics[width=6cm]{fmf.png}\\[4cm]
+\end{center}
+\end{figure}
+
+\begin{center}
+\Huge\textbf{Katzova središčnost in Googlov PageRank}\\[0.5cm]
+\large\textsc{Kratko poročilo, Projekt pri predmetu Finančni praktikum}\\[4cm]
+\end{center}
+
+\begin{flushleft}
+
+\end{flushleft}
+\vspace{\fill}
+\begin{flushright}
+Anamari Oštarijaš, Tina Ražić
+\end{flushright}
+
+\begin{flushleft}
+Ljubljana, december 2018
+\end{flushleft}
+
+\newpage
+\tableofcontents
+
+\newpage
+\section{Opis projekta}
+\hspace{4.8mm}Kompleksna omrežja lahko analiziramo z uporabo različnih kvantitetnih merjenj, imenujemo jih tudi mere središčnosti,  ki intuitivno zajamejo pomembnost določenih vozlišč. 
+V projektu bova implementirali Googlov PageRank in Katzovo središčnost z uporabo potenčne metode. Na različnih grafih (tudi socialnih omrežjih) bova analizirali in primerjali, kako merjenji razvrstita vozlišča po pomembnosti. 
+
+\section{Katzova središčnost}
+\subsection{Matematično ozadje}
+
+
+\hspace{4.8mm}Katzova središčnost izmeri vpliv igralca v omrežju tako, da upošteva direktne sosede igralca in vse druge igralce, ki so posredno povezani s tem igralcem preko njegovih direktnih sosedov. \\
+Naj bo naše omrežje graf z $n$ vozlišči oziroma igralci. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{d}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $d$ število povezav med njima. Naš graf predstavimo z matriko sosednosti A, torej element matrike $a_{ij}$ ima vrednost $1$, če je vozlišče $i$ povezano z vozliščem $j$, in $0$, če nista povezana. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje. \\
+Označimo s $C_{Katz}(i)$ Katzovo središčnost vozlišča $i$. Potem lahko izračunamo središčnost na sledeči način:
+
+$$C_{Katz}(i) = \sum_{k=1}^{\infty}\sum_{j=1}^{n}\alpha^{k}(A^{k})_{ij}.$$
+
+Pri izbiri $\alpha$ moramo upoštevati zgornjo omejitev $$\alpha < \frac{1}{\abs{\lambda_{max}}}.$$
+\subsection{Psevdokoda}
+
+\end{document}
