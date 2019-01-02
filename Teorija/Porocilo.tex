@@ -103,10 +103,10 @@ saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ vse skupaj divergira. Za majhen
 \subsection{Algoritem za Katzovo središčnost}
 \begin{lstlisting}[language=Python]
 def katz(G, max_num_of_steps, tolerance, alpha, beta):
-    '''Computes the Katz centrality for the nodes of the graph G.'''
+    '''Vrne vektor Katzovih srediscnosti za vozlisca v grafu G'''
     start = timer()
     A = nx.adjacency_matrix(G)
-    # first guess for vector r is first column of A
+    # za zacetni vektor potencne metode vzamemo prvi stolpec matrike
     r = A[:, 0]  
     diff = 1000
     k = 0
@@ -119,12 +119,10 @@ def katz(G, max_num_of_steps, tolerance, alpha, beta):
     #normalized_r = preprocessing.normalize(r, axis=0, norm ='l1')
     print('process finished after {} iterations'.format(k))
     end = timer()
-    # timing of the process
+    # trajanje 
     print('time consumption: {} seconds'.format(end-start))
     return r
 \end{lstlisting}
-
-\subsection{Analiza algoritma}
 
 
 \section{Googlov PageRank}
@@ -253,7 +251,7 @@ def pagerank2(matrix, max_num_of_steps, tolerance, alpha):
 
 \end{lstlisting}
 
-\subsection{Analiza algoritma}
+\section{Analiza algoritmov}
 \hspace{4.8mm}Analizirali sva učinkovitost algoritma na podlagi večih parametrov. Najbolj naju je zanimalo, kako izbira parametera $\alpha$, toleranca in število korakov vplivajo na hitrost algoritma in natančnost rezultata. \\
 Uporabljali sva \textit{Facebook graf}, ki vsebuje $4039$ vozlišč in $88234$ povezav.
 \begin{figure}[h]
@@ -262,6 +260,58 @@ Uporabljali sva \textit{Facebook graf}, ki vsebuje $4039$ vozlišč in $88234$ p
 \end{center}
 \end{figure}
 
+\subsection{Katzova središčnost}
+Pri izračuni Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Konstanta $\beta$ je samo začetna središčnost vozlišča, zato ne vpliva bistveno na algoritem. Pri preveliki izbiri $\alpha$ pa nam lahko algoritem divergira. Vemo, da mora biti $\alpha$ manjša od inverzne vrednosti največje lastne vrednosti. Največjo lastno vrednost matrike sosednosti lahko navzgor omejimo z maksimalno stopnjo vozlišč v grafu. V našem facebooku grafu je povprečna stopnja 43.6910. Poskusimo zagnati algoritem z $\alpha < 1/43.6910 \doteq 0.0229.$
+
+\begin{lstlisting}[language=Python]
+r1 = katz(G_fb, 10000000, 0.01, 0.01, 1)
+rank(r1)
+----------------------------------------------------------------
+proces koncan po 1454 iteracijah
+trajanje procesa:  1.5228195489999052 sekund
+RuntimeWarning: invalid value encountered in subtract
+  del sys.path[0]
+\end{lstlisting}
+
+Naš proces se ustavi, ampak dobimo napako. Vzemimo še manjši $\alpha = 0.0062.$
+\begin{lstlisting}[language=Python]
+r2 = katz(G_fb, 10000000, 0.01, 0.0061, 1)
+rank(r2)
+----------------------------------------------------------------
+proces koncan po 1057 iteracijah
+trajanje procesa:  1.1888756090002062 sekund
+matrix([[3404],
+        [1125],
+        [ 577],
+        ...,
+        [  17],
+        [  91],
+        [ 361]], dtype=int64)
+\end{lstlisting}
+
+Proces se konča po 1057 iteracijah, če pa vzamemo $\alpha = 0.0062$ pa ponovno dobimo napako. Poglejmo, če se z manjšim $\alpha$ tudi število iteracij zmanjša. Najprej poskusimo z $\alpha = 0.001.$
+
+\begin{lstlisting}[language=Python]
+r4 = katz(G_fb, 10000000, 0.01, 0.001, 1)
+rank(r4)
+----------------------------------------------------------------
+proces koncan po 7 iteracijah
+trajanje procesa:  0.22587556300004508 sekund
+matrix([[3404],
+        [1125],
+        [ 577],
+        ...,
+        [  17],
+        [  91],
+        [ 361]], dtype=int64)
+\end{lstlisting}
+
+Opazimo ogromen napredek. Sedaj algoritem potrebuje samo $7$ iteracij in približno $0.2$ sekundi.
+
+Poglejmo si graf Zahtevnost algoritma Katzove središčnosti v odvisnosti od $\alpha.$
+
+
+\subsection{Googlov PageRank}
 \subsubsection{Izbira parametra $\alpha$} 
 \hspace{4.8mm}Vemo, da večji ko je $\alpha$, več podatkov o omrežju izgubimo. Torej želimo, da je ta parameter čim večji. \\
 Poglejmo najprej kako velikost vpliva na čas izračuna pagerank vektorja. 
