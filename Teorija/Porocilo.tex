@@ -94,12 +94,7 @@ $$x = \beta (I - \alpha A)^{-1} = \beta \sum_{t=0}^{\infty} (\alpha A)^t. $$
 Vidimo, da je Katzova središčnost vozlišča določena z uteženimi potmi do ostalih vozlišč. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{t}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $t$ število povezav med njima. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje.
 Pri izbiri $\alpha$ moramo upoštevati omejitev 
 $$0 < \alpha < \frac{1}{\abs{\lambda_{max}}},$$
-saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ vse skupaj divergira. Vemo, da je Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča in imajo glavno vlogo sosedje prve stopnje.
-
-
-
-
-
+saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ vse skupaj divergira. Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča in imajo glavno vlogo sosedje prve stopnje.
 
 
 \subsection{Algoritem za Katzovo središčnost}
@@ -118,12 +113,15 @@ def katz(G, max_num_of_steps, tolerance, alpha, beta):
         r, q = alpha*A.dot(r) + beta * vector, r
         diff = np.linalg.norm(q-r, ord=1)
         k += 1
+    #normalized_r = preprocessing.normalize(r, axis=0, norm ='l1')
     print('process finished after {} iterations'.format(k))
     end = timer()
     # timing of the process
     print('time consumption: {} seconds'.format(end-start))
     return r
 \end{lstlisting}
+
+\subsection{Analiza algoritma}
 
 
 \section{Googlov PageRank}
