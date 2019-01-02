@@ -14,6 +14,8 @@
 \usepackage{commath}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{caption}
+\captionsetup[figure]{name=Slika}
 
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -72,6 +74,7 @@ Ljubljana, december 2018
 
 \newpage
 \tableofcontents
+\listoffigures
 
 \newpage
 \section{Opis projekta}
@@ -127,11 +130,12 @@ def katz(G, max_num_of_steps, tolerance, alpha, beta):
 
 
 \section{Googlov PageRank}
-\hspace{4.8mm}Nemogoče je definirati splošno mer pomembnosti, ki bi bila sprejemljiva za vse uporabnike iskalnika. Google uporablja pagerank za mero kakovosti spletnih strani. Temelji na predpostavki, da število linkov (povezav)  do in iz strani daje informacijo o pomembnosti strani. \\
-Naj bodo vse spletne strani urejene s števili od $1$ do $n$ in naj bo $i$ neka spletna stran. Potem $O_i$ določa množico strani, s katerimi je i povezana, tako da $i$ vsebuje link do strani v množici $O_i$ (\textit{outlink}). Število outlinkov označimo z $N_i = \|O_i\|$. Množica \textit{inlinkov}, označena z $I_i$, je množica strani, ki imajo outlink do $i$ (strani v $I_i$ vsebujejo linke do $i$).
-Splošno, več ko ima stran$i$ inlinkov, pomembnejša je. \\ Vseeno pa bi bilo s takim sistemom preprosto manipulirati (če bi nekdo želel, da njegovo spletno stran vidi čim več ljudi, bi ustvaril veliko število nepomembnih spletnih strani, ki bi vsebovale linke do njegove spletne strani). Da bi tako manipulacijo preprečili, definiramo rang vozlišča $i$ tako, da če ima visoko rangirana stran $j$ outlink do $i$, to doda pomembnosti $i$ na sledeč način: rang strani $i$ je utežena vsota rangov strani, ki imajo outlink do $i$. Obteženost  je taka, da je rang strani $j$ razdeljen enakomerno med njenimi outlinki. Z enačbo: $$r_i = \sum_{j \in I_1} \frac{r_j}{N_j}.$$ \\
+\hspace{4.8mm}Nemogoče je definirati splošno mero pomembnosti, ki bi bila sprejemljiva za vse uporabnike iskalnika. Google uporablja pagerank za mero kakovosti spletnih strani. Temelji na predpostavki, da število linkov (povezav) do in iz strani daje informacijo o pomembnosti strani. \\
+\subsection{Matematično ozadje}
+Naj bodo vse spletne strani urejene s števili od $1$ do $n$ in naj bo $i$ neka spletna stran. Potem $O_i$ določa množico strani, s katerimi je $i$ povezana, tako da $i$ vsebuje link do strani v množici $O_i$ (\textit{outlink}). Število outlinkov označimo z $N_i = \|O_i\|$. Množica \textit{inlinkov}, označena z $I_i$, je množica strani, ki imajo outlink do $i$ (strani v $I_i$ vsebujejo linke do $i$).
+Splošno, več ko ima stran $i$ inlinkov, pomembnejša je. \\ S takim sistemom bi bilo preprosto manipulirati (če bi nekdo želel, da njegovo spletno stran vidi čim več ljudi, bi ustvaril veliko število nepomembnih spletnih strani, ki bi vsebovale linke do njegove spletne strani). Da bi tako manipulacijo preprečili, definiramo rang vozlišča $i$ tako, da če ima visoko rangirana stran $j$ outlink do $i$, to doda pomembnosti $i$ na sledeč način: rang strani $i$ je utežena vsota rangov strani, ki imajo outlink do $i$. Obteženost  je taka, da je rang strani $j$ razdeljen enakomerno med njenimi outlinki. Z enačbo: $$r_i = \sum_{j \in I_1} \frac{r_j}{N_j}.$$ \\
 Ta definicija je rekurzivna, zato pageranki ne morejo biti izračunani direktno. Uporabimo iteracijo. Najprej ugibamo začetni rangni vektor $r^0$. Potem iteriramo:
-$$r_i^{(k+1)} = \sum_{j \in I_1} \frac{r_j^{(k)}}{N_j}$$ \\
+$$r_i^{(k+1)} = \sum_{j \in I_1} \frac{r_j^{(k)}}{N_j}.$$ \\
 Raje zapišimo problem z matrikami. Naj bo $Q$ kvadratna matrika dimenzije $n$. Definiramo:
 \[
 Q_{ij} = 
@@ -156,7 +160,7 @@ Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slu�
 d_j = 
 \left \{
 	\begin{array}{ll}
-		1  &, \mbox{če} N_j = 0 \\
+		1  &, \mbox{če}\hspace{2mm} N_j = 0 \\
 		0 &, \mbox{sicer} 
 	\end{array}
 \right. \]
@@ -165,9 +169,9 @@ $$e = [1 … 1] ^T \in \mathbb{R}^n.$$
 Prilagojena matrika je definirana s $ P = Q + \frac{1}{n}ed^T$. 
 S to prilagoditvijo je matrika $P$ desna stohastična matrika; vsi elementi so nenegativni in elementi vsakega stolpca se seštejejo v 1. \\
 \\Desna stohastična matrika $P$ zadošča 
-$$e^TP = e^T$$. \\
+$$e^TP = e^T.$$ \\
 Želimo definirati pagerank vektor kot enoličen lastni vektor matrike $P$ z lastno vrednostjo $1$:
-$$Pr=r$$. \\
+$$Pr=r.$$ \\
 Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$ ($r_i$) je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi, v tem primeru ima matrika več lastnih vrednosti enakih $1$). \\ Edinstvenost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč slastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
 \\Zaradi velikosti spleta je matrika linkov $P$ reducibilna, torej pagerank lastni vektor ni dobro definiran. Da si zagotovimo ireducibilnost, umetno dodamo linke iz vsake spletne strani do vseh drugih. To lahko storimo, če vzamemo konveksno kombinacijo $P$ in matrike ranga 1:
 $$A=\alpha P + (1-\alpha)\frac{1}{n}ee^T,$$
@@ -178,7 +182,7 @@ Za konvergenco numeričnega algoritma za lastno vrednost je pomembno, da vemo, k
 Ta izrek nam pove, da tudi če ima $P$ več lastnih vrednosti enakih 1, kar je po navadi res, bo druga največja lastna vrednost matrike $A$ enaka $\alpha$. \\
 Namesto prilagoditve lahko definiramo:
 $$A = \alpha P + (1- \alpha)ve^T,$$
-Kjer je $v$ nenegativen vektor z normo 1, ki je lahko izbran tako, da je iskanje pristransko do strani določene vrste. Zato ga včasih imenujemo \textit{personaliziran vektor}. Uporaben je tudi v izogib manipulacijam proti t.i.\textit{link farms}. 
+Kjer je $v$ nenegativen vektor z normo 1, ki je lahko izbran tako, da je iskanje pristransko do strani določene vrste. Zato ga včasih imenujemo \textit{personaliziran vektor}.
 
 \subsection{Potenčna metoda}
 Želimo rešiti problem lastne vrednosti:
@@ -197,8 +201,10 @@ Konvergenca je odvisna od porazdelitve lastnih vrednosti. Če je druga največja
 \begin{lstlisting}[language=Python]
 def Qmatrix(matrika):
     '''za dano matriko sosednosti grafa vrne desno stohasticno matriko Q, kjer so nekateri stolpci se vedno nicelni'''
-    sums = np.sum(matrix, axis=0)       #tabela vsot stolpcev matrike
-    return np.nan_to_num(matrix/sums)   #vsak stolpec matrike delimo z njegovo vsoto, ce je vsota 0, vrne 0 namesto nan
+    #tabela vsot stolpcev matrike
+    sums = np.sum(matrix, axis=0) 
+    #vsak stolpec matrike delimo z njegovo vsoto, ce je vsota 0, vrne 0 namesto nan      
+    return np.nan_to_num(matrix/sums)   
 
 def dvector(matrika):
     '''za dano matriko sosednosti vrne transponiran vektor d, kjer d[j] = 1 ; ce #(outlinkov od j) = 0 in d[j] = 0 ; sicer'''
@@ -228,16 +234,18 @@ def Amatrix(matrix, alpha):
     return alpha*P + (1-alpha)*1/n*e.dot(e.transpose())
 
 def pagerank2(matrix, max_num_of_steps, tolerance, alpha):
-    '''vrne pagerank vektor matrike sosednosti grafa, 0<=alpha<=1'''
+    '''vrne pagerank vektor matrike sosednosti grafa, 0 <= alpha <= 1'''
     start = timer()
-    A = Amatrix(matrix, alpha)           #desno stohasticna matrika dane matrike
-    r = A[:,0]  			    #ugibanje pagerank vektorja s prvim stolpcem matrike Q
+    #desno stohasticna matrika dane matrike
+    A = Amatrix(matrix, alpha)
+    #ugibanje pagerank vektorja s prvim stolpcem matrike Q   
+    r = A[:,0]  
     diff = 1000
     k = 0
     while diff > tolerance and k < max_num_of_steps:
-        r, q = A.dot(r), r                             #potencna metoda
-        #r = q/np.linalg.norm(q, ord=1)    #ni potrebno pri Google matriki
-        diff = np.linalg.norm(q-r, ord=1)   #razlika med prejsnjim in novim vekorjem r
+        r, q = A.dot(r), r          #potencna metoda
+        #razlika med prejsnjim in novim vekorjem r
+        diff = np.linalg.norm(q-r, ord=1)   
         k+=1
     print('proces koncan po {} iteracijah'.format(k))
     end = timer()
@@ -308,19 +316,30 @@ trajanje procesa: 105.30294071864228 sekund
  [  2.56615989e-05]
  [  5.75079410e-05]]
 \end{lstlisting}
-\newpage
+
 Večji ko je $\alpha$, več iteracij potrebujemo, da pridemo do željene tolerance. \\
 Razlika med $r_1$ in $r_2$ v drugi normi je $0,00717920758147$, med $r_2$ in $r_4$ pa $0,00371765512728$, torej lahko z višjim $\alpha$ pričakujemo bolj natančne rezultate.  
 \begin{figure}[h]
 \begin{center} 
-\includegraphics[width=10cm]{Pagerank_alpha.png}
+\includegraphics[width=9cm]{Pagerank_alpha.png}
+\caption[Zahtevnost Googlovega pagerank algoritma glede na $\alpha$]{Graf števila iteracij pri danim $\alpha$ izračunan na Facebook grafu.}
 \end{center}
 \end{figure}
+
+\newpage
+
+\subsubsection{Izbira tolerance} 
+\hspace{4.8mm}Očitno je, da višjo ko zastavimo toleranco, daljši bo postopek izračuna. Toleranco si izberemo sami in je odvisna od tega, kako natančen rezultat želimo. Tu sva za izračun sprotne tolerance v algoritmu izbrali prvo normo vektorja razlike med prejšnjim in trenutnim pagerank vektorjem ob določeni iteraciji, preprosto zaradi razloga, da je ta norma vedno večja ali enaka drugi normi vektorja. \\
 \begin{figure}[h]
 \begin{center} 
-\includegraphics[width=10cm]{Pagerank_tolerance.png}
+\includegraphics[width=9cm]{Pagerank_tolerance.png}
+	\caption[Zahtevnost Googlovega pagerank algoritma glede na toleranco]{Graf števila iteracij pri $\alpha = 0.85$ glede na dano toleranco izračunan na Facebook grafu.}
 \end{center}
 \end{figure}
+
+
+
+
 
 \section{Primerjava algoritmov}
 \end{document}
