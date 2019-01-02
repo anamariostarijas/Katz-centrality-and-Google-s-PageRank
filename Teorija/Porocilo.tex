@@ -116,7 +116,6 @@ def katz(G, max_num_of_steps, tolerance, alpha, beta):
         r, q = alpha*A.dot(r), r
         diff = np.linalg.norm(q-r, ord=1)
         k += 1
-    # normalized_r = preprocessing.normalize(r, axis=0, norm ='l1')
     print('process finished after {} iterations'.format(k))
     end = timer()
     # trajanje
