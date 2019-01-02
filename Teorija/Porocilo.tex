@@ -83,13 +83,48 @@ V projektu bova implementirali Googlov PageRank in Katzovo središčnost z upora
 
 
 \hspace{4.8mm}Katzova središčnost izmeri vpliv igralca v omrežju tako, da upošteva direktne sosede igralca in vse druge igralce, ki so posredno povezani s tem igralcem preko njegovih direktnih sosedov. \\
-Naj bo naše omrežje graf z $n$ vozlišči oziroma igralci. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{d}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $d$ število povezav med njima. Naš graf predstavimo z matriko sosednosti A, torej element matrike $a_{ij}$ ima vrednost $1$, če je vozlišče $i$ povezano z vozliščem $j$, in $0$, če nista povezana. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje. \\
-Označimo s $C_{Katz}(i)$ Katzovo središčnost vozlišča $i$. Potem lahko izračunamo središčnost na sledeči način:
+Naj bo naše omrežje graf z $n$ vozlišči oziroma spletnimi stranmi. Naš graf predstavimo z matriko sosednosti A, torej element matrike $a_{ij}$ ima vrednost $1$, če je vozlišče $i$ povezano z vozliščem $j$, in $0$, če nista povezana. Katzovo središčnost $x_{i}$ vozlišča $i$ lahko zapišemo kot
 
-$$C_{Katz}(i) = \sum_{k=1}^{\infty}\sum_{j=1}^{n}\alpha^{k}(A^{k})_{ij}.$$
+$$x_{i} = \alpha\sum_{k}a_{i,k}x_{k} + \beta,$$
+kjer sta $\alpha$ in $\beta$ konstanti. Konstanta $\beta$ je dana začetna središčnost vsakega vozlišča. Zapišimo zvezo v matrični formi:
+$$x = \alpha Ax + \beta,$$
+kjer je $\beta$ sedaj vektor, katerega komponente so enake dani konstanti. Sledi, da lahko vektor $x$ izračunamo kot
+$$x = \beta (I - \alpha A)^{-1} = \beta \sum_{t=0}^{\infty} (\alpha A)^t. $$
 
-Pri izbiri $\alpha$ moramo upoštevati zgornjo omejitev $$\alpha < \frac{1}{\abs{\lambda_{max}}}.$$
-\subsection{Psevdokoda}
+Vidimo, da je Katzova središčnost vozlišča določena z uteženimi potmi do ostalih vozlišč. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{t}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $t$ število povezav med njima. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje.
+Pri izbiri $\alpha$ moramo upoštevati omejitev 
+$$0 < \alpha < \frac{1}{\abs{\lambda_{max}}},$$
+saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ vse skupaj divergira. Vemo, da je Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča in imajo glavno vlogo sosedje prve stopnje.
+
+
+
+
+
+
+
+\subsection{Algoritem za Katzovo središčnost}
+\begin{lstlisting}[language=Python]
+def katz(G, max_num_of_steps, tolerance, alpha, beta):
+    '''Computes the Katz centrality for the nodes of the graph G.'''
+    start = timer()
+    A = nx.adjacency_matrix(G)
+    # first guess for vector r is first column of A
+    r = A[:, 0]  
+    diff = 1000
+    k = 0
+    vector = np.ones((A.shape[1], 1))
+    while diff > tolerance and k < max_num_of_steps:
+        # inner product of matrix A and vector r
+        r, q = alpha*A.dot(r) + beta * vector, r
+        diff = np.linalg.norm(q-r, ord=1)
+        k += 1
+    print('process finished after {} iterations'.format(k))
+    end = timer()
+    # timing of the process
+    print('time consumption: {} seconds'.format(end-start))
+    return r
+\end{lstlisting}
+
 
 \section{Googlov PageRank}
 \hspace{4.8mm}Nemogoče je definirati splošno mer pomembnosti, ki bi bila sprejemljiva za vse uporabnike iskalnika. Google uporablja pagerank za mero kakovosti spletnih strani. Temelji na predpostavki, da število linkov (povezav)  do in iz strani daje informacijo o pomembnosti strani. \\
