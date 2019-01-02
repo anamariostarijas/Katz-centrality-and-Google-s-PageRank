@@ -103,23 +103,23 @@ saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ vse skupaj divergira. Za majhen
 \subsection{Algoritem za Katzovo središčnost}
 \begin{lstlisting}[language=Python]
 def katz(G, max_num_of_steps, tolerance, alpha, beta):
-    '''Vrne vektor Katzovih srediscnosti za vozlisca v grafu G'''
+    '''Computes the Katz centrality for the nodes of the graph G.'''
     start = timer()
     A = nx.adjacency_matrix(G)
-    # za zacetni vektor potencne metode vzamemo prvi stolpec matrike
-    r = A[:, 0]  
     diff = 1000
     k = 0
     vector = np.ones((A.shape[1], 1))
+   # za zacetni vektor vzamemo vektor beta
+    r = beta * vector
     while diff > tolerance and k < max_num_of_steps:
         # inner product of matrix A and vector r
-        r, q = alpha*A.dot(r) + beta * vector, r
+        r, q = alpha*A.dot(r), r
         diff = np.linalg.norm(q-r, ord=1)
         k += 1
-    #normalized_r = preprocessing.normalize(r, axis=0, norm ='l1')
+    # normalized_r = preprocessing.normalize(r, axis=0, norm ='l1')
     print('process finished after {} iterations'.format(k))
     end = timer()
-    # trajanje 
+    # trajanje
     print('time consumption: {} seconds'.format(end-start))
     return r
 \end{lstlisting}
