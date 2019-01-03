@@ -24,10 +24,11 @@ def katz(graph, max_num_of_steps, tolerance, alpha, beta):
     start = timer()
     A = nx.adjacency_matrix(graph)
     # first guess for vector r is first column of A
-    r = A[:, 0]
+    
     diff = 1000
     k = 0
     vector = np.ones((A.shape[1], 1))
+    r = beta * vector
     while diff > tolerance and k < max_num_of_steps:
         # inner product of matrix A and vector r
         r, q = alpha*A.dot(r) + beta * vector, r
