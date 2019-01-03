@@ -92,34 +92,35 @@ $$x_{i} = \alpha\sum_{k}a_{i,k}x_{k} + \beta,$$
 kjer sta $\alpha$ in $\beta$ konstanti. Konstanta $\beta$ je dana začetna središčnost vsakega vozlišča. Zapišimo zvezo v matrični formi:
 $$x = \alpha Ax + \beta,$$
 kjer je $\beta$ sedaj vektor, katerega komponente so enake dani konstanti. Sledi, da lahko vektor $x$ izračunamo kot
-$$x = \beta (I - \alpha A)^{-1} = \beta \sum_{t=0}^{\infty} (\alpha A)^t. $$
+$$x =  (I - \alpha A)^{-1} \beta= \sum_{t=0}^{\infty} (\alpha A)^t \beta. $$
 
 Vidimo, da je Katzova središčnost vozlišča določena z uteženimi potmi do ostalih vozlišč. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{t}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $t$ število povezav med njima. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje.
 Pri izbiri $\alpha$ moramo upoštevati omejitev 
 $$0 < \alpha < \frac{1}{\abs{\lambda_{max}}},$$
-saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ vse skupaj divergira. Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča in imajo glavno vlogo sosedje prve stopnje.
+saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ algoritem divergira. Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča. Na primer pri $\alpha = 0,$ izračun mere središčnosti sploh ne pride do izraza in imajo vsa vozlišča mero središčnosti $\beta.$  Pri večji izbrii $\alpha,$ pa se vpliv $\beta$ koeficienta manjša.
 
 
 \subsection{Algoritem za Katzovo središčnost}
 \begin{lstlisting}[language=Python]
-def katz(G, max_num_of_steps, tolerance, alpha, beta):
-    '''Vrne vektor Katzovih srediscnosti za vozlisca v grafu G'''
+def katz(G, max_num_of_steps, tolerance, alpha, beta, vector=None):
+    '''Computes the Katz centrality for the nodes of the graph G.'''
     start = timer()
     A = nx.adjacency_matrix(G)
-    # za zacetni vektor potencne metode vzamemo prvi stolpec matrike
-    r = A[:, 0]  
     diff = 1000
     k = 0
-    vector = np.ones((A.shape[1], 1))
+    ones = np.ones((A.shape[1], 1))
+    if vector is None:
+        vector = ones
+    r = beta * vector
     while diff > tolerance and k < max_num_of_steps:
         # inner product of matrix A and vector r
-        r, q = alpha*A.dot(r) + beta * vector, r
+        r, q = alpha*A.dot(r) + beta * ones, r
         diff = np.linalg.norm(q-r, ord=1)
         k += 1
-    #normalized_r = preprocessing.normalize(r, axis=0, norm ='l1')
+    r = r/np.linalg.norm(r,ord = 2)
     print('process finished after {} iterations'.format(k))
     end = timer()
-    # trajanje 
+    # timing of the process
     print('time consumption: {} seconds'.format(end-start))
     return r
 \end{lstlisting}
@@ -127,6 +128,7 @@ def katz(G, max_num_of_steps, tolerance, alpha, beta):
 
 \section{Googlov PageRank}
 \hspace{4.8mm}Nemogoče je definirati splošno mero pomembnosti, ki bi bila sprejemljiva za vse uporabnike iskalnika. Google uporablja pagerank za mero kakovosti spletnih strani. Temelji na predpostavki, da število linkov (povezav) do in iz strani daje informacijo o pomembnosti strani. \\
+Popravi pomanjkljivost Katzove središčnosti, ki pravi, da je spletna stran pomembna, če je povezana s pomembno spletno stranjo. V resnici to ne drži, zato Googlov PageRank enakomerno porazdeli pomembnost spletne strani med vse povezave.
 \subsection{Matematično ozadje}
 Naj bodo vse spletne strani urejene s števili od $1$ do $n$ in naj bo $i$ neka spletna stran. Potem $O_i$ določa množico strani, s katerimi je $i$ povezana, tako da $i$ vsebuje link do strani v množici $O_i$ (\textit{outlink}). Število outlinkov označimo z $N_i = \|O_i\|$. Množica \textit{inlinkov}, označena z $I_i$, je množica strani, ki imajo outlink do $i$ (strani v $I_i$ vsebujejo linke do $i$).
 Splošno, več ko ima stran $i$ inlinkov, pomembnejša je. \\ S takim sistemom bi bilo preprosto manipulirati (če bi nekdo želel, da njegovo spletno stran vidi čim več ljudi, bi ustvaril veliko število nepomembnih spletnih strani, ki bi vsebovale linke do njegove spletne strani). Da bi tako manipulacijo preprečili, definiramo rang vozlišča $i$ tako, da če ima visoko rangirana stran $j$ outlink do $i$, to doda pomembnosti $i$ na sledeč način: rang strani $i$ je utežena vsota rangov strani, ki imajo outlink do $i$. Obteženost  je taka, da je rang strani $j$ razdeljen enakomerno med njenimi outlinki. Z enačbo: $$r_i = \sum_{j \in I_1} \frac{r_j}{N_j}.$$ \\
@@ -150,7 +152,7 @@ $$r^{(k+1)} = Qr^{(k)},\qquad  k=0,1,… ,$$
 kar je potenčna metoda za izračun lastnega vektorja.\\
 \\ \textbf{Problem}: Ni jasno, da je pagerank dobro definiran, saj ne vemo ali obstaja lastna vrednost enaka 1. Pomagamo si s teorijo Markovske verige.\\
 \\Obstaja interpretacija pageranka z naključnimi sprehodi. Predpostavimo, da uporabnik na spletni strani izbere naslednjo stran  med outlinki z enako verjetnostjo. Markovska veriga je slučajni proces v katerem je naslednje stanje določeno le s trenutnim stanjem, proces nima spomina. Prehodna matrika Markovske verige je $Q^T$.\\
-Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slučajnega sprehoda ne sme imeti strani brez outlinkov (taka stran bi imela stolpec iz ničel v $Q$). Torej je model prilagojen tako, da so ničelni stolpci nadomeščeni s konstantnimi vrednostmi na vseh mestih. To pomeni, da je enaka verjetnost, da pridemo na katero koli drugo spletno stran. \\ 
+Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slučajnega sprehoda ne sme imeti strani brez outlinkov (taka stran bi imela ničelni stolpec v $Q$). Torej je model prilagojen tako, da so ničelni stolpci nadomeščeni s konstantnimi vrednostmi na vseh mestih. To pomeni, da je enaka verjetnost, da pridemo na katero koli drugo spletno stran. \\ 
 \\Definiramo vektorje: \\
 \[
 d_j = 
@@ -168,7 +170,7 @@ S to prilagoditvijo je matrika $P$ desna stohastična matrika; vsi elementi so n
 $$e^TP = e^T.$$ \\
 Želimo definirati pagerank vektor kot enoličen lastni vektor matrike $P$ z lastno vrednostjo $1$:
 $$Pr=r.$$ \\
-Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$ ($r_i$) je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi, v tem primeru ima matrika več lastnih vrednosti enakih $1$). \\ Edinstvenost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč slastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
+Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$ ($r_i$) je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi, v tem primeru ima matrika več lastnih vrednosti enakih $1$). \\ Edinstvenost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč lastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
 \\Zaradi velikosti spleta je matrika linkov $P$ reducibilna, torej pagerank lastni vektor ni dobro definiran. Da si zagotovimo ireducibilnost, umetno dodamo linke iz vsake spletne strani do vseh drugih. To lahko storimo, če vzamemo konveksno kombinacijo $P$ in matrike ranga 1:
 $$A=\alpha P + (1-\alpha)\frac{1}{n}ee^T,$$
 za nek $\alpha$, ki zadošča $0 \leq \alpha \leq 1$. Matrika $A$ je desna stohastična. Razlaga naključnega sprehoda dodatnega rang-1 izraza je, da bo uporabnik na vsakem časovnem koraku skočil na naključno stran z verjetnostjo $1- \alpha$.
@@ -188,7 +190,7 @@ Prepostavimo, da imamo dan začetni približek $r{(0)}$. \\
 \\
 \textbf{Algoritem:} \\
 \begin{center} za k = 1, 2, … do konvergence
-	$$q^{(k)} = Ar{(k-1)}$$ 
+	$$q^{(k)} = Ar^{(k-1)}$$ 
 	$$r^{(k)} = q^{(k)}/ \|q^{(k)}\|_1$$ \\
 \end{center}
 Konvergenca je odvisna od porazdelitve lastnih vrednosti. Če je druga največja lastna vrednost blizu 1, bo iteracija zelo počasna. To na srečo ne velja za Google matriko. Vektor normaliziramo, da ne bi z iteracijami postali preveliki ali premajhni, posledično nereprezentativni s števili s plavajočo vejico. To v resnici ni potrebno, saj se v primeru desnih stohastičnih matrik temu izognemo.
@@ -261,55 +263,117 @@ Uporabljali sva \textit{Facebook graf}, ki vsebuje $4039$ vozlišč in $88234$ p
 \end{figure}
 
 \subsection{Katzova središčnost}
-Pri izračuni Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Konstanta $\beta$ je samo začetna središčnost vozlišča, zato ne vpliva bistveno na algoritem. Pri preveliki izbiri $\alpha$ pa nam lahko algoritem divergira. Vemo, da mora biti $\alpha$ manjša od inverzne vrednosti največje lastne vrednosti. Največjo lastno vrednost matrike sosednosti lahko navzgor omejimo z maksimalno stopnjo vozlišč v grafu. V našem facebooku grafu je povprečna stopnja 43.6910. Poskusimo zagnati algoritem z $\alpha < 1/43.6910 \doteq 0.0229.$
+\subsection{Izbira parametra $\beta$}
+\hspace{4.8mm}Pri izračunu Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Dana konstanta $\beta$ je začetna središčnost za vsa vozlišča, zato je vektor s konstantami $\beta$ naš začetni vektor pri potenčni metodi. Pogledali sva si primera, ko je $\beta =1$ in $\beta =50,$ pri fiksnem $\alpha = 0.003$. Spodaj b0omo videli, da je to dobra izbira $\alpha.$
 
 \begin{lstlisting}[language=Python]
-r1 = katz(G_fb, 10000000, 0.01, 0.01, 1)
+b1 = katz(G_fb, 10000000, 0.01, 0.003, 1)
+b1
+----------------------------------------------------------------
+process finished after 15 iterations
+time consumption: 0.4371460449999631 seconds
+array([[0.02708885],
+       [0.01358665],
+       [0.01327441],
+       ...,
+       [0.01291167],
+       [0.01299226],
+       [0.01318997]])
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python]
+b2 = katz(G_fb, 10000000, 0.01, 0.003, 1000)
+b2
+----------------------------------------------------------------
+process finished after 24 iterations
+time consumption: 0.4746733580000182 seconds
+array([[0.0270888 ],
+       [0.01358663],
+       [0.01327439],
+       ...,
+       [0.01291165],
+       [0.01299224],
+       [0.01318995]])
+\end{lstlisting}
+
+Opazimo, da parameter $\beta$ ne vpliva na rezultat algoritma, samo število iteracij se poveča. Poglejmo si graf zahtevnosti algoritma Katzove središčnosti v odvisnosti od $\beta.$
+
+\begin{figure}[h]
+\begin{center} 
+\includegraphics[width=9cm]{Katz_beta.png}
+\caption[Zahtevnost algoritma Katzove središčnosti glede na $\beta$]{Graf števila iteracij pri danem $\beta$ izračunan na Facebook grafu.}
+\end{center}
+\end{figure}
+
+Vidimo, da število iteracij naraste iz 15 na 25, medtem ko beta povečamo za 1000. Tudi trajanje algoritma se vseskozi giblje okoli 0.5 sekunde, torej parameter $\beta$ res nima znatnega vpliva na algoritem.
+
+\subsection{Izbira parametra $\alpha$}
+Pri preveliki izbiri $\alpha$ lahko algoritem divergira. Vemo, da mora biti $\alpha$ manjša od inverzne vrednosti največje lastne vrednosti. V našem primeru je največja lastna vrednost 162.37394233563828, torej za $\alpha$ velja omejitev $\alpha < 1/162.37 \doteq 0.00616.$ Poglejmo kaj se zgodi, če je $\alpha = 0.0062.$
+
+\begin{lstlisting}[language=Python]
+r1 = katz(G_fb, 10000000, 0.01, 0.0062, 1)
 rank(r1)
 ----------------------------------------------------------------
-proces koncan po 1454 iteracijah
-trajanje procesa:  1.5228195489999052 sekund
+process finished after 104436 iterations
+time consumption: 213.18206373500004 seconds
 RuntimeWarning: invalid value encountered in subtract
-  del sys.path[0]
+
+array([[   0],
+       [2683],
+       [2684],
+       ...,
+       [1352],
+       [2018],
+       [4038]], dtype=int64)
 \end{lstlisting}
 
-Naš proces se ustavi, ampak dobimo napako. Vzemimo še manjši $\alpha = 0.0062.$
+Naš proces se ustavi po dobrih 3 minutah in pojavi se napaka. Naj bo sedaj $\alpha = 0.0061.$
+
 \begin{lstlisting}[language=Python]
-r2 = katz(G_fb, 10000000, 0.01, 0.0061, 1)
+r2 = katz(G_fb, 100000, 0.01, 0.0061, 1)
 rank(r2)
 ----------------------------------------------------------------
-proces koncan po 1057 iteracijah
-trajanje procesa:  1.1888756090002062 sekund
-matrix([[3404],
-        [1125],
-        [ 577],
-        ...,
-        [  17],
-        [  91],
-        [ 361]], dtype=int64)
+process finished after 1056 iterations
+time consumption: 1.1106130180000946 seconds
+array([[3404],
+       [1125],
+       [ 577],
+       ...,
+       [  17],
+       [  91],
+       [ 361]], dtype=int64)
 \end{lstlisting}
 
-Proces se konča po 1057 iteracijah, če pa vzamemo $\alpha = 0.0062$ pa ponovno dobimo napako. Poglejmo, če se z manjšim $\alpha$ tudi število iteracij zmanjša. Najprej poskusimo z $\alpha = 0.001.$
+Proces se konča po 1056 iteracijah in v dobri 1 sekundi, kar je skoraj stokrat manj kot pri $\alpha = 0.0062$. Poglejmo, če se z manjšim $\alpha$, tudi število iteracij zmanjša. Najprej poskusimo z $\alpha = 0.003.$
 
 \begin{lstlisting}[language=Python]
-r4 = katz(G_fb, 10000000, 0.01, 0.001, 1)
-rank(r4)
+r3 = katz(G_fb, 10000000, 0.01, 0.003, 1)
+rank(r3)
 ----------------------------------------------------------------
-proces koncan po 7 iteracijah
-trajanje procesa:  0.22587556300004508 sekund
-matrix([[3404],
-        [1125],
-        [ 577],
-        ...,
-        [  17],
-        [  91],
-        [ 361]], dtype=int64)
+process finished after 15 iterations
+time consumption: 0.2149773610003649 seconds
+array([[3977],
+       [1403],
+       [ 807],
+       ...,
+       [  43],
+       [ 175],
+       [ 598]], dtype=int64)
 \end{lstlisting}
 
-Opazimo ogromen napredek. Sedaj algoritem potrebuje samo $7$ iteracij in približno $0.2$ sekundi.
+Opazimo ogromen napredek. Sedaj algoritem potrebuje samo $15$ iteracij in približno $0.2$ sekundi.
 
-Poglejmo si graf Zahtevnost algoritma Katzove središčnosti v odvisnosti od $\alpha.$
+Poglejmo si graf zahtevnosti algoritma Katzove središčnosti v odvisnosti od $\alpha.$
 
+\begin{figure}[h]
+\begin{center} 
+\includegraphics[width=9cm]{Katz_alpha.png}
+\caption[Zahtevnost algoritma Katzove središčnosti glede na $\alpha$]{Graf števila iteracij pri danem $\alpha$ izračunan na Facebook grafu.}
+\end{center}
+\end{figure}
+
+Vidimo, da število iteracij z večanjem konstante $\alpha$ zelo počasi narašča, ko pa se $\alpha$ približuje zgornji omejitvi, pa število iteracij eksponentno zraste.
+Za primerjavo algoritma Katzove središčnosti z algoritmom PageRank bomo vzeli $\alpha = 0.003$, pri katerem algoritem potrebuje $15$ iteracij in $0.4$ sekunde ter $\beta = 1.$
 
 \subsection{Googlov PageRank}
 \subsubsection{Izbira parametra $\alpha$} 
@@ -370,7 +434,7 @@ Razlika med $r_1$ in $r_2$ v drugi normi je $0,00717920758147$, med $r_2$ in $r_
 \begin{figure}[h]
 \begin{center} 
 \includegraphics[width=9cm]{Pagerank_alpha.png}
-\caption[Zahtevnost Googlovega pagerank algoritma glede na $\alpha$]{Graf števila iteracij pri danim $\alpha$ izračunan na Facebook grafu.}
+\caption[Zahtevnost Googlovega pagerank algoritma glede na $\alpha$]{Graf števila iteracij pri danem $\alpha$ izračunan na Facebook grafu.}
 \end{center}
 \end{figure}
 
