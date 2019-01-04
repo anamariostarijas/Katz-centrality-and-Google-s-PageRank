@@ -450,8 +450,31 @@ Razlika med $r_1$ in $r_2$ v drugi normi je $0,00717920758147$, med $r_2$ in $r_
 \end{figure}
 
 
-
-
-
 \section{Primerjava algoritmov}
+Pri primerjavi algoritmov sva si pomagali z napisano funkcijo rank, ki nama vrne vektor rankiranih vrednosti, pri čemer ima vozlišče z najmanjšo središčnostjo najmanjši rank. Najprej sva najina algoritma preverili na majhnem grafu, potem pa še na večjih. 
+
+\subsection{Majhen graf}
+Majhen graf T ima 5 vozlišč in 5 usmerjenih povezav. Najina algoritma na grafu T vrneta isto razvrstitev pomembnosti vozlišč. 
+
+\begin{figure}[h]
+\begin{center} 
+\includegraphics[width=9cm]{T_graph.png}
+\caption[Razvrstitev pomembnosti vozlišč v majhnem grafu]{Razvrstitev pomembnosti vozlišč v majhnem grafu.}
+\end{center}
+\end{figure}
+
+\subsection{Malo večji graf}
+Za malo večji graf sva vzeli vgrajen graf Zachary's Karate Club v knjižnici networkx. Graf ima 34 vozlišč in 78 povezav. Najina algoritma samo 7 vozlišč enako rangirata. Do glaven razlike pride, ko pri Googlovem PageRank algoritmu pomembnost vsakega vozlišča razdelimo enakomerno med izhodne povezave, pri Katzovem algoritmu pa celotno pomembnost prenesemo na povezana vozlišča. 
+
+\begin{figure}[h]
+\begin{center} 
+\includegraphics[width=6cm]{O_graph1.png}
+\includegraphics[width=6cm]{O_graph2.png}
+\caption[Razvrstitev pomembnosti vozlišč v malo večjem grafu]{Razvrstitev pomembnosti vozlišč v malo večjem grafu z Googlovim PageRank algoritmom na levi in Katzovim algoritmom na desni.}
+\end{center}
+\end{figure}
+
+Opazimo, da z obema algoritmoma na zunanjih vozliščih dobimo nižji rank, najpomembnejši vozlišči pa enako določita.
+
+\subsection{Največji graf}
 \end{document}
