@@ -1,5 +1,5 @@
 % PREAMBULA DOKUMENTA
-\documentclass[a4paper]{article}
+\documentclass[12pt,a4paper]{amsart}
 \usepackage[slovene]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -16,7 +16,16 @@
 \usepackage{color}
 \usepackage{caption}
 \captionsetup[figure]{name=Slika}
+\usepackage[normalem]{ulem}
 
+\textwidth 15cm
+\textheight 24cm
+\oddsidemargin.5cm
+\evensidemargin.5cm
+\topmargin-5mm
+\addtolength{\footskip}{10pt}
+\pagestyle{plain}
+\overfullrule=15pt 
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -44,66 +53,67 @@
 
 \lstset{style=mystyle}
  
+\newcommand{\program}{Finančna matematika} % ime studijskega programa: Matematika/Finan"cna matematika
+\newcommand{\imeavtorja}{Anamari Oštarijaš, Tina Ražić} % ime avtorja
+\newcommand{\imementorja}{} % akademski naziv in ime mentorja
+\newcommand{\naslovdela}{KATZOVA SREDIŠČNOST IN GOOGLOV PAGERANK}
+\newcommand{\letnica}{2019} %letnica diplome
 
 
 \begin{document}
 \thispagestyle{empty}
+\noindent{\large
+UNIVERZA V LJUBLJANI\\[1mm]
+FAKULTETA ZA MATEMATIKO IN FIZIKO\\[5mm]
+\program\ -- 1.~stopnja}
+\vfill
 
-\begin{figure}[t]
-\begin{center} 
-\includegraphics[width=6cm]{fmf.png}\\[4cm]
+\begin{center}{\large
+\imeavtorja\\[2mm]
+{\bf \naslovdela}\\[10mm]
+Poročilo projekta pri predmetu Finančni praktikum\\[1cm]
+}
 \end{center}
-\end{figure}
+\vfill
 
-\begin{center}
-\Huge\textbf{Katzova središčnost in Googlov PageRank}\\[0.5cm]
-\large\textsc{Poročilo projekta pri predmetu Finančni praktikum}\\[4cm]
-\end{center}
+\noindent{\large
+Ljubljana, \letnica}
+\pagebreak
 
-\begin{flushleft}
-
-\end{flushleft}
-\vspace{\fill}
-\begin{flushright}
-Anamari Oštarijaš, Tina Ražić
-\end{flushright}
-
-\begin{flushleft}
-Ljubljana, december 2018
-\end{flushleft}
-
-\newpage
+\thispagestyle{empty}
 \tableofcontents
 \listoffigures
 
 \newpage
 \section{Opis projekta}
-\hspace{4.8mm}Kompleksna omrežja lahko analiziramo z uporabo različnih kvantitetnih merjenj, imenujemo jih tudi mere središčnosti,  ki intuitivno zajamejo pomembnost določenih vozlišč. 
-V projektu bova implementirali Googlov PageRank in Katzovo središčnost z uporabo potenčne metode. Na različnih grafih (tudi socialnih omrežjih) bova analizirali in primerjali, kako merjenji razvrstita vozlišča po pomembnosti. 
+Kompleksna omrežja lahko analiziramo z uporabo različnih kvantitetnih merjenj, imenujemo jih tudi mere središčnosti,  ki intuitivno zajamejo pomembnost določenih vozlišč.
+
+V projektu sva implementirali Googlov PageRank in Katzovo središčnost z uporabo potenčne metode. Na različnih grafih (tudi socialnih omrežjih) sva analizirali in primerjali, kako merjenji razvrstita vozlišča po pomembnosti. 
 
 \section{Katzova središčnost}
+
 \subsection{Matematično ozadje}
 
 
-\hspace{4.8mm}Katzova središčnost izmeri vpliv igralca v omrežju tako, da upošteva direktne sosede igralca in vse druge igralce, ki so posredno povezani s tem igralcem preko njegovih direktnih sosedov. \\
-Naj bo naše omrežje graf z $n$ vozlišči oziroma spletnimi stranmi. Naš graf predstavimo z matriko sosednosti A, torej element matrike $a_{ij}$ ima vrednost $1$, če je vozlišče $i$ povezano z vozliščem $j$, in $0$, če nista povezana. Katzovo središčnost $x_{i}$ vozlišča $i$ lahko zapišemo kot
+Katzova središčnost izmeri vpliv igralca v omrežju tako, da upošteva direktne sosede igralca in vse druge igralce, ki so posredno povezani s tem igralcem preko njegovih direktnih sosedov.
 
+Naj bo naše omrežje graf z $n$ vozlišči oziroma spletnimi stranmi. Naš graf predstavimo z matriko sosednosti $A$, torej element matrike $a_{ij}$ ima vrednost $1$, če je vozlišče $i$ povezano z vozliščem $j$, in $0$, če nista povezana. Katzovo središčnost $x_{i}$ vozlišča $i$ lahko zapišemo kot
 $$x_{i} = \alpha\sum_{k}a_{i,k}x_{k} + \beta,$$
 kjer sta $\alpha$ in $\beta$ konstanti. Konstanta $\beta$ je dana začetna središčnost vsakega vozlišča. Zapišimo zvezo v matrični formi:
 $$x = \alpha Ax + \beta,$$
 kjer je $\beta$ sedaj vektor, katerega komponente so enake dani konstanti. Sledi, da lahko vektor $x$ izračunamo kot
 $$x =  (I - \alpha A)^{-1} \beta= \sum_{t=0}^{\infty} (\alpha A)^t \beta. $$
 
-Vidimo, da je Katzova središčnost vozlišča določena z uteženimi potmi do ostalih vozlišč. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{t}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $t$ število povezav med njima. Potence matrike A nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje.
+Vidimo, da je Katzova središčnost vozlišča določena z uteženimi potmi do ostalih vozlišč. Vsaka povezava v grafu dobi utež $\alpha$ in z $\alpha^{t}$ izračunamo težo povezave vozlišča z drugim vozliščem, pri čemer je $t$ število povezav med njima. Potence matrike $A$ nam povejo, če je vozlišče povezano s drugimi indirektnimi vozlišči preko sosedov. Na primer, če je v matriki $A^{3}$ element $a_{2,5}  = 1,$ pomeni, da sta vozlišče $2$ in vozlišče $5$ povezana s tremi povezavami preko sosedov prve stopnje in sosedov druge stopnje. 
+
 Pri izbiri $\alpha$ moramo upoštevati omejitev 
 $$0 < \alpha < \frac{1}{\abs{\lambda_{max}}},$$
-saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ algoritem divergira. Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča. Na primer pri $\alpha = 0,$ izračun mere središčnosti sploh ne pride do izraza in imajo vsa vozlišča mero središčnosti $\beta.$  Pri večji izbrii $\alpha,$ pa se vpliv $\beta$ koeficienta manjša.
+saj pri $\alpha = \frac{1}{\abs{\lambda_{max}}}$ algoritem divergira. Za majhen $\alpha$ poti, ki imajo več kot eno povezavo do izbranega vozlišča, prispevajo zelo malo k središčnosti vozlišča. Na primer pri $\alpha = 0$ izračun mere središčnosti sploh ne pride do izraza in imajo vsa vozlišča mero središčnosti $\beta.$  Pri večjem $\alpha$ pa se vpliv $\beta$ koeficienta manjša.
 
-
-\subsection{Algoritem za Katzovo središčnost}
+\subsection{Algoritem za Katzovo središčnost}Algoritem sva zapisali v programu Python.
 \begin{lstlisting}[language=Python]
 def katz(G, max_num_of_steps, tolerance, alpha, beta, vector=None):
-    '''Computes the Katz centrality for the nodes of the graph G.'''
+    '''Za dan graf vrne Katzovo srediscnost vozlisc'''
     start = timer()
     A = nx.adjacency_matrix(G)
     diff = 1000
@@ -113,27 +123,27 @@ def katz(G, max_num_of_steps, tolerance, alpha, beta, vector=None):
         vector = ones
     r = beta * vector
     while diff > tolerance and k < max_num_of_steps:
-        # inner product of matrix A and vector r
-        r, q = alpha*A.dot(r) + beta * ones, r
+        #potencna metoda
+        r, q = alpha * A.dot(r) + beta * ones, r
         diff = np.linalg.norm(q-r, ord=1)
         k += 1
-    r = r/np.linalg.norm(r,ord = 2)
-    print('process finished after {} iterations'.format(k))
+    r = r / np.linalg.norm(r, ord = 2)
+    print('proces koncan po {} iteracijah'.format(k))
     end = timer()
     # timing of the process
-    print('time consumption: {} seconds'.format(end-start))
+    print('trajanje procesa: {} sekund'.format(end-start))
     return r
 \end{lstlisting}
 
 
 \section{Googlov PageRank}
-\hspace{4.8mm}Nemogoče je definirati splošno mero pomembnosti, ki bi bila sprejemljiva za vse uporabnike iskalnika. Google uporablja pagerank za mero kakovosti spletnih strani. Temelji na predpostavki, da število linkov (povezav) do in iz strani daje informacijo o pomembnosti strani. \\
-Popravi pomanjkljivost Katzove središčnosti, ki pravi, da je spletna stran pomembna, če je povezana s pomembno spletno stranjo. V resnici to ne drži, zato Googlov PageRank enakomerno porazdeli pomembnost spletne strani med vse povezave.
+\hspace{4.8mm}Nemogoče je definirati splošno mero pomembnosti, ki bi bila sprejemljiva za vse uporabnike iskalnika. Google uporablja pagerank za mero kakovosti spletnih strani. Temelji na predpostavki, da število linkov (povezav) do in iz strani daje informacijo o pomembnosti strani. Ta algoritem popravi pomanjkljivost Katzove središčnosti, ki pravi, da je spletna stran pomembna, če je povezana s pomembno spletno stranjo. V resnici to ne drži, zato Googlov PageRank enakomerno porazdeli pomembnost spletne strani med vse povezave.
 \subsection{Matematično ozadje}
 Naj bodo vse spletne strani urejene s števili od $1$ do $n$ in naj bo $i$ neka spletna stran. Potem $O_i$ določa množico strani, s katerimi je $i$ povezana, tako da $i$ vsebuje link do strani v množici $O_i$ (\textit{outlink}). Število outlinkov označimo z $N_i = \|O_i\|$. Množica \textit{inlinkov}, označena z $I_i$, je množica strani, ki imajo outlink do $i$ (strani v $I_i$ vsebujejo linke do $i$).
-Splošno, več ko ima stran $i$ inlinkov, pomembnejša je. \\ S takim sistemom bi bilo preprosto manipulirati (če bi nekdo želel, da njegovo spletno stran vidi čim več ljudi, bi ustvaril veliko število nepomembnih spletnih strani, ki bi vsebovale linke do njegove spletne strani). Da bi tako manipulacijo preprečili, definiramo rang vozlišča $i$ tako, da če ima visoko rangirana stran $j$ outlink do $i$, to doda pomembnosti $i$ na sledeč način: rang strani $i$ je utežena vsota rangov strani, ki imajo outlink do $i$. Obteženost  je taka, da je rang strani $j$ razdeljen enakomerno med njenimi outlinki. Z enačbo: $$r_i = \sum_{j \in I_1} \frac{r_j}{N_j}.$$ \\
+Splošno, več ko ima stran $i$ inlinkov, pomembnejša je. S takim sistemom bi bilo preprosto manipulirati (če bi nekdo želel, da njegovo spletno stran vidi čim več ljudi, bi ustvaril veliko število nepomembnih spletnih strani, ki bi vsebovale linke do njegove spletne strani). Da bi tako manipulacijo preprečili, definiramo rang vozlišča $i$ tako, da če ima visoko rangirana stran $j$ outlink do $i$, to doda pomembnosti $i$ na sledeč način: rang strani $i$ je utežena vsota rangov strani, ki imajo outlink do $i$. Obteženost  je taka, da je rang strani $j$ razdeljen enakomerno med njenimi outlinki. Z enačbo: $$r_i = \sum_{j \in I_1} \frac{r_j}{N_j}.$$ \\
 Ta definicija je rekurzivna, zato pageranki ne morejo biti izračunani direktno. Uporabimo iteracijo. Najprej ugibamo začetni rangni vektor $r^0$. Potem iteriramo:
-$$r_i^{(k+1)} = \sum_{j \in I_1} \frac{r_j^{(k)}}{N_j}.$$ \\
+$$r_i^{(k+1)} = \sum_{j \in I_1} \frac{r_j^{(k)}}{N_j}.$$ 
+\\
 Raje zapišimo problem z matrikami. Naj bo $Q$ kvadratna matrika dimenzije $n$. Definiramo:
 \[
 Q_{ij} = 
@@ -144,16 +154,21 @@ Q_{ij} =
 	\end{array}
 \right. \]
 \\
-Torej ima vrstica $i$ neničelne elemente na mestih inlinkov $i$. Podobno ima stolpec $j$ neničelne elemente enake $N_j$ na mestih  outlinkov $j$, vsota vseh elementov v stolpcu je enaka $1$. Definicija je ekvivalentna skalarnem produktu vrstice $i$ in vektorja $r$, ki vsebuje range vseh strani.\\
-Enačbo sedaj lahko zapišemo v matrični obliki:
-$$ \lambda r = Qr,     \qquad \lambda = 1,$$
+Torej ima vrstica $i$ neničelne elemente na mestih inlinkov $i$. Podobno ima stolpec $j$ neničelne elemente enake $N_j$ na mestih  outlinkov $j$, vsota vseh elementov v stolpcu je enaka $1$.
+
+Prejšnjo enačbo sedaj lahko zapišemo v matrični obliki:
+$$ \lambda r = Qr,     \qquad \lambda = 1.$$
 Tako dobimo, da je $r$ lastni vektor matrike $Q$ z lastno vrednostjo $\lambda = 1$. Sedaj preprosto vidimo, da je iteracija ekvivalentna
 $$r^{(k+1)} = Qr^{(k)},\qquad  k=0,1,… ,$$
-kar je potenčna metoda za izračun lastnega vektorja.\\
-\\ \textbf{Problem}: Ni jasno, da je pagerank dobro definiran, saj ne vemo ali obstaja lastna vrednost enaka 1. Pomagamo si s teorijo Markovske verige.\\
-\\Obstaja interpretacija pageranka z naključnimi sprehodi. Predpostavimo, da uporabnik na spletni strani izbere naslednjo stran  med outlinki z enako verjetnostjo. Markovska veriga je slučajni proces v katerem je naslednje stanje določeno le s trenutnim stanjem, proces nima spomina. Prehodna matrika Markovske verige je $Q^T$.\\
-Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slučajnega sprehoda ne sme imeti strani brez outlinkov (taka stran bi imela ničelni stolpec v $Q$). Torej je model prilagojen tako, da so ničelni stolpci nadomeščeni s konstantnimi vrednostmi na vseh mestih. To pomeni, da je enaka verjetnost, da pridemo na katero koli drugo spletno stran. \\ 
-\\Definiramo vektorje: \\
+kar je potenčna metoda za izračun lastnega vektorja, ki pripada lastni vrednosti 1.\\
+
+Trenutno še ni jasno, da je pagerank dobro definiran, saj ne vemo, če obstaja lastna vrednost enaka 1. Pomagamo si s teorijo Markovske verige.
+
+Obstaja interpretacija pageranka z naključnimi sprehodi. Predpostavimo, da slučajni uporabnik na spletni strani izbere naslednjo stran  med outlinki z enako verjetnostjo. Markovska veriga je slučajni proces, v katerem je naslednje stanje določeno le s trenutnim stanjem, proces nima spomina. Prehodna matrika Markovske verige je $Q^T$.
+
+Slučajni uporabnik nikoli ne sme obtičati. Z drugimi besedami, naš model slučajnega sprehoda ne sme imeti strani brez outlinkov (taka stran bi imela ničelni stolpec v $Q$). Torej je model prilagojen tako, da so ničelni stolpci nadomeščeni s konstantnimi vrednostmi na vseh mestih. To pomeni, da je enaka verjetnost, da pridemo na katero koli drugo spletno stran. 
+
+S tem namenom definiramo vektorje: \\
 \[
 d_j = 
 \left \{
@@ -162,31 +177,29 @@ d_j =
 		0 &, \mbox{sicer} 
 	\end{array}
 \right. \]
-za $j = 1, .., n$ in
-$$e = [1 … 1] ^T \in \mathbb{R}^n.$$
-Prilagojena matrika je definirana s $ P = Q + \frac{1}{n}ed^T$. 
-S to prilagoditvijo je matrika $P$ desna stohastična matrika; vsi elementi so nenegativni in elementi vsakega stolpca se seštejejo v 1. \\
-\\Desna stohastična matrika $P$ zadošča 
-$$e^TP = e^T.$$ \\
+za $j = 1, .., n$ in \\
+$$e = [1 … 1] ^T \in \mathbb{R}^n.$$ \\
+Prilagojena matrika je definirana s \\
+$$ P = Q + \frac{1}{n}ed^T.$$ 
+S to prilagoditvijo je matrika $P$ desna stohastična matrika; vsi elementi so nenegativni in elementi vsakega stolpca se seštejejo v 1.
+Desna stohastična matrika $P$ zadošča $e^TP = e^T.$ 
+
 Želimo definirati pagerank vektor kot enoličen lastni vektor matrike $P$ z lastno vrednostjo $1$:
-$$Pr=r.$$ \\
-Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$ ($r_i$) je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi, v tem primeru ima matrika več lastnih vrednosti enakih $1$). \\ Edinstvenost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč lastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
+$$Pr=r.$$ 
+
+Lastni vektor prehodne matrike je stacionarna verjetnostna porazdelitev Markovske verige. Element na mestu $i$ ($r_i$) je verjetnost, da po velikem številu korakov slučajni uporabnik pristane na strani $i$. Za zagotovitev enoličnosti mora biti matrika ireducibilna (slučajni uporabnik se lahko v nekem delu grafa zagozdi, v tem primeru ima matrika več lastnih vrednosti enakih $1$). \\ Enoličnost največje lastne vrednosti ireducibilne, pozitivne, desne stohastične matrike je zagotovljena s \textit{Perron-Frobeniusovim izrekom}, največja singularna vrednost bo enaka $1$, pripadajoč lastni vektor je pozitiven in je edini lastni vektor, ki je nenegativen. \\
 \\Zaradi velikosti spleta je matrika linkov $P$ reducibilna, torej pagerank lastni vektor ni dobro definiran. Da si zagotovimo ireducibilnost, umetno dodamo linke iz vsake spletne strani do vseh drugih. To lahko storimo, če vzamemo konveksno kombinacijo $P$ in matrike ranga 1:
 $$A=\alpha P + (1-\alpha)\frac{1}{n}ee^T,$$
 za nek $\alpha$, ki zadošča $0 \leq \alpha \leq 1$. Matrika $A$ je desna stohastična. Razlaga naključnega sprehoda dodatnega rang-1 izraza je, da bo uporabnik na vsakem časovnem koraku skočil na naključno stran z verjetnostjo $1- \alpha$.
 Za konvergenco numeričnega algoritma za lastno vrednost je pomembno, da vemo, kako so s prilagoditvijo ranga-1 spremenjene lastne vrednosti.\\
-\\ \textbf{Izrek:} \textit{Naj bodo lastne vrednosti desne stohastične matrike $P$ enake ${1, \lambda_2, \lambda_3, … , \lambda_n}$. Potem so lastne vrednosti $A=\alpha P + (1- \alpha) \frac{1}{n}ee^T$ enake ${1, \alpha \lambda_2, \alpha \lambda_3, … , \alpha \lambda_n}$.}\\
+\\ \textbf{Izrek:} Naj bodo lastne vrednosti desne stohastične matrike $P$ enake ${1, \lambda_2, \lambda_3, … , \lambda_n}$. Potem so lastne vrednosti $A=\alpha P + (1- \alpha) \frac{1}{n}ee^T$ enake ${1, \alpha \lambda_2, \alpha \lambda_3, … , \alpha \lambda_n}$.\\
 \\
-Ta izrek nam pove, da tudi če ima $P$ več lastnih vrednosti enakih 1, kar je po navadi res, bo druga največja lastna vrednost matrike $A$ enaka $\alpha$. \\
-Namesto prilagoditve lahko definiramo:
-$$A = \alpha P + (1- \alpha)ve^T,$$
-Kjer je $v$ nenegativen vektor z normo 1, ki je lahko izbran tako, da je iskanje pristransko do strani določene vrste. Zato ga včasih imenujemo \textit{personaliziran vektor}.
+Ta izrek nam pove, da tudi če ima $P$ več lastnih vrednosti enakih 1, kar je po navadi res, bo druga največja lastna vrednost matrike $A$ enaka $\alpha$. 
 
 \subsection{Potenčna metoda}
 Želimo rešiti problem lastne vrednosti:
 $$Ar = r,$$
-Kjer je $r$ nomaliziran $\|r\|_1=1$. Iskani lastni vektor označimo s $t_1$. \\
-Prepostavimo, da imamo dan začetni približek $r{(0)}$. \\
+kjer je $r$ nomaliziran $\|r\|_1=1$. Iskani lastni vektor označimo s $t_1$. Prepostavimo, da imamo dan začetni približek $r{(0)}$. \\
 \\
 \textbf{Algoritem:} \\
 \begin{center} za k = 1, 2, … do konvergence
@@ -195,7 +208,7 @@ Prepostavimo, da imamo dan začetni približek $r{(0)}$. \\
 \end{center}
 Konvergenca je odvisna od porazdelitve lastnih vrednosti. Če je druga največja lastna vrednost blizu 1, bo iteracija zelo počasna. To na srečo ne velja za Google matriko. Vektor normaliziramo, da ne bi z iteracijami postali preveliki ali premajhni, posledično nereprezentativni s števili s plavajočo vejico. To v resnici ni potrebno, saj se v primeru desnih stohastičnih matrik temu izognemo.
 
-\subsection{Algoritem za Googlov PageRank}
+\subsection{Algoritem za Googlov PageRank} Algoritem sva napisali v programu Python.
 \begin{lstlisting}[language=Python]
 def Qmatrix(matrika):
     '''za dano matriko sosednosti grafa vrne desno stohasticno matriko Q, kjer so nekateri stolpci se vedno nicelni'''
@@ -258,20 +271,21 @@ def pagerank2(matrix, max_num_of_steps, tolerance, alpha):
 Uporabljali sva \textit{Facebook graf}, ki vsebuje $4039$ vozlišč in $88234$ povezav.
 \begin{figure}[h]
 \begin{center} 
-\includegraphics[width=6cm]{Facebook_graph.png}
+\includegraphics[width=8cm]{Facebook_graph.png}
+\caption[Facebook graf]{Facebook graf}
 \end{center}
 \end{figure}
 
 \subsection{Katzova središčnost}
 \subsection{Izbira parametra $\beta$}
-\hspace{4.8mm}Pri izračunu Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Dana konstanta $\beta$ je začetna središčnost za vsa vozlišča, zato je vektor s konstantami $\beta$ naš začetni vektor pri potenčni metodi. Pogledali sva si primera, ko je $\beta =1$ in $\beta =50,$ pri fiksnem $\alpha = 0.003$. Spodaj b0omo videli, da je to dobra izbira $\alpha.$
+Pri izračunu Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Dana konstanta $\beta$ je začetna središčnost za vsa vozlišča, zato je vektor s konstantami $\beta$ naš začetni vektor pri potenčni metodi. Pogledali sva si primera, ko je $\beta =1$ in $\beta =50,$ pri fiksnem $\alpha = 0.003$. Spodaj b0omo videli, da je to dobra izbira $\alpha.$
 
 \begin{lstlisting}[language=Python]
 b1 = katz(G_fb, 10000000, 0.01, 0.003, 1)
 b1
 ----------------------------------------------------------------
-process finished after 15 iterations
-time consumption: 0.4371460449999631 seconds
+proces koncan po 15 iteracijah
+trajanje procesa: 0.4371460449999631 sekund
 array([[0.02708885],
        [0.01358665],
        [0.01327441],
@@ -285,8 +299,8 @@ array([[0.02708885],
 b2 = katz(G_fb, 10000000, 0.01, 0.003, 1000)
 b2
 ----------------------------------------------------------------
-process finished after 24 iterations
-time consumption: 0.4746733580000182 seconds
+proces koncan po 24 iteracijah
+trajanje procesa: 0.4746733580000182 sekund
 array([[0.0270888 ],
        [0.01358663],
        [0.01327439],
@@ -314,10 +328,9 @@ Pri preveliki izbiri $\alpha$ lahko algoritem divergira. Vemo, da mora biti $\al
 r1 = katz(G_fb, 10000000, 0.01, 0.0062, 1)
 rank(r1)
 ----------------------------------------------------------------
-process finished after 104436 iterations
-time consumption: 213.18206373500004 seconds
+proces koncan po 104436 iteracijah
+trajanje procesa: 213.18206373500004 sekund
 RuntimeWarning: invalid value encountered in subtract
-
 array([[   0],
        [2683],
        [2684],
@@ -333,8 +346,8 @@ Naš proces se ustavi po dobrih 3 minutah in pojavi se napaka. Naj bo sedaj $\al
 r2 = katz(G_fb, 100000, 0.01, 0.0061, 1)
 rank(r2)
 ----------------------------------------------------------------
-process finished after 1056 iterations
-time consumption: 1.1106130180000946 seconds
+proces koncan po 1056 iteracijah
+trajanje procesa: 1.1106130180000946 sekund
 array([[3404],
        [1125],
        [ 577],
@@ -350,8 +363,8 @@ Proces se konča po 1056 iteracijah in v dobri 1 sekundi, kar je skoraj stokrat 
 r3 = katz(G_fb, 10000000, 0.01, 0.003, 1)
 rank(r3)
 ----------------------------------------------------------------
-process finished after 15 iterations
-time consumption: 0.2149773610003649 seconds
+proces koncan po 15 iteracijah
+trajanje procesa: 0.2149773610003649 sekund
 array([[3977],
        [1403],
        [ 807],
@@ -374,10 +387,11 @@ Poglejmo si graf zahtevnosti algoritma Katzove središčnosti v odvisnosti od $\
 
 Vidimo, da število iteracij z večanjem konstante $\alpha$ zelo počasi narašča, ko pa se $\alpha$ približuje zgornji omejitvi, pa število iteracij eksponentno zraste.
 Za primerjavo algoritma Katzove središčnosti z algoritmom PageRank bomo vzeli $\alpha = 0.003$, pri katerem algoritem potrebuje $15$ iteracij in $0.4$ sekunde ter $\beta = 1.$
-
+\pagebreak
 \subsection{Googlov PageRank}
 \subsubsection{Izbira parametra $\alpha$} 
-\hspace{4.8mm}Vemo, da večji ko je $\alpha$, več podatkov o omrežju izgubimo. Torej želimo, da je ta parameter čim večji. \\
+Vemo, da manjši ko je $\alpha$, več podatkov o omrežju izgubimo. Torej želimo, da je ta parameter čim večji. 
+
 Poglejmo najprej kako velikost vpliva na čas izračuna pagerank vektorja. 
 
 \begin{lstlisting}[language=Python]
@@ -396,7 +410,7 @@ trajanje procesa: 11.7118154744594 sekund
  [  2.72346363e-04]]
 \end{lstlisting}
 
-Izračun je bil končan po $575$ iteracijah in $11,71$ sekundah.
+Izračun je bil končan po $575$ iteracijah in $11.71$ sekundah.
 
 \begin{lstlisting}[language=Python]
 r_2 = pagerank2(M_fb,10000000,0.0000001, 0.999)
@@ -412,7 +426,7 @@ trajanje procesa: 61.73710875091092 sekund
  [  4.70770334e-05]
  [  1.04002744e-04]]
 \end{lstlisting}
-S povečanjem $\alpha$ smo povročili, da se je čas izračuna povečal na $61,74$ sekund, torej za več kot $5$ kratnik prejšnjega. 
+S povečanjem $\alpha$ smo povročili, da se je čas izračuna povečal na $61.74$ sekund, torej za več kot $5$ kratnik prejšnjega. 
 
 \begin{lstlisting}[language=Python]
 r_4 = pagerank2(M_fb,10000000,0.0000001, 0.9999)
@@ -430,7 +444,7 @@ trajanje procesa: 105.30294071864228 sekund
 \end{lstlisting}
 
 Večji ko je $\alpha$, več iteracij potrebujemo, da pridemo do željene tolerance. \\
-Razlika med $r_1$ in $r_2$ v drugi normi je $0,00717920758147$, med $r_2$ in $r_4$ pa $0,00371765512728$, torej lahko z višjim $\alpha$ pričakujemo bolj natančne rezultate.  
+Razlika med $r_1$ in $r_2$ v drugi normi je $0.00718$, med $r_2$ in $r_4$ pa $0.00372$, torej lahko z višjim $\alpha$ pričakujemo bolj natančne rezultate.  
 \begin{figure}[h]
 \begin{center} 
 \includegraphics[width=9cm]{Pagerank_alpha.png}
@@ -438,10 +452,8 @@ Razlika med $r_1$ in $r_2$ v drugi normi je $0,00717920758147$, med $r_2$ in $r_
 \end{center}
 \end{figure}
 
-\newpage
-
 \subsubsection{Izbira tolerance} 
-\hspace{4.8mm}Očitno je, da višjo ko zastavimo toleranco, daljši bo postopek izračuna. Toleranco si izberemo sami in je odvisna od tega, kako natančen rezultat želimo. Tu sva za izračun sprotne tolerance v algoritmu izbrali prvo normo vektorja razlike med prejšnjim in trenutnim pagerank vektorjem ob določeni iteraciji, preprosto zaradi razloga, da je ta norma vedno večja ali enaka drugi normi vektorja. \\
+Očitno je, da višjo ko zastavimo toleranco, daljši bo postopek izračuna. Toleranco si izberemo sami in je odvisna od tega, kako natančen rezultat želimo. Tu sva za izračun sprotne tolerance v algoritmu izbrali prvo normo vektorja razlike med prejšnjim in trenutnim pagerank vektorjem ob določeni iteraciji, preprosto zaradi razloga, da je ta norma vedno večja ali enaka drugi normi vektorja. 
 \begin{figure}[h]
 \begin{center} 
 \includegraphics[width=9cm]{Pagerank_tolerance.png}
@@ -451,30 +463,45 @@ Razlika med $r_1$ in $r_2$ v drugi normi je $0,00717920758147$, med $r_2$ in $r_
 
 
 \section{Primerjava algoritmov}
-Pri primerjavi algoritmov sva si pomagali z napisano funkcijo rank, ki nama vrne vektor rankiranih vrednosti, pri čemer ima vozlišče z najmanjšo središčnostjo najmanjši rank. Najprej sva najina algoritma preverili na majhnem grafu, potem pa še na večjih. 
+Pri primerjavi algoritmov sva si pomagali z napisano funkcijo \textit{rang}, ki nama vrne vektor rangiranih vrednosti, pri čemer ima vozlišče z najmanjšo središčnostjo najmanjši rang. Najprej sva najina algoritma preverili na majhnem grafu, potem pa še na večjih. 
+
+Za toleranco sva pri obeh algoritmih vzeli $0.000000001$.
 
 \subsection{Majhen graf}
-Majhen graf T ima 5 vozlišč in 5 usmerjenih povezav. Najina algoritma na grafu T vrneta isto razvrstitev pomembnosti vozlišč. 
+Majhen graf $T$ ima 5 vozlišč in 5 usmerjenih povezav. Najina algoritma na grafu $T$ vrneta isto razvrstitev pomembnosti vozlišč, pri čemer Katz opravi 101 iteracij ($\alpha = 0.8$), pagerank pa 27 ($\alpha = 0.99$). $\alpha$ sva si izbrali tako, da je čim bolj ustrezala algoritmu na danem grafu, torej pri pageranku čim večja, pri Katzu pa ustrezno majhna.
 
 \begin{figure}[h]
 \begin{center} 
-\includegraphics[width=9cm]{T_graph.png}
-\caption[Razvrstitev pomembnosti vozlišč v majhnem grafu]{Razvrstitev pomembnosti vozlišč v majhnem grafu.}
+\includegraphics[width=8cm]{T_graph.png}
+\caption[Razvrstitev pomembnosti vozlišč v majhnem grafu]{Razvrstitev pomembnosti vozlišč s funkcijo rang v majhnem grafu.}
 \end{center}
 \end{figure}
-
 \subsection{Malo večji graf}
-Za malo večji graf sva vzeli vgrajen graf Zachary's Karate Club v knjižnici networkx. Graf ima 34 vozlišč in 78 povezav. Najina algoritma samo 7 vozlišč enako rangirata. Do glaven razlike pride, ko pri Googlovem PageRank algoritmu pomembnost vsakega vozlišča razdelimo enakomerno med izhodne povezave, pri Katzovem algoritmu pa celotno pomembnost prenesemo na povezana vozlišča. 
+Za malo večji graf sva vzeli vgrajen graf \textit{Zachary's Karate Club} v knjižnici \textit{NetworkX}, ki ima 34 vozlišč in 78 povezav.\\
+Pagerank je za doseg tolerance porabil 122 iteracij, 0.22 sekunde, Katz pa 398 iteracij in 0.051 sekunde. Razlog za hitrejši izračun vektorja s Katzom kljub večjemu številu iteracij je proces priprave vhodne matrike do Google matrike, na kateri potem izvajamo potenčno metodo. 
+
+Najina algoritma samo 7 vozlišč enako rangirata. Do glavne razlike pride, ko pri Googlovem PageRank algoritmu pomembnost vsakega vozlišča razdelimo enakomerno med izhodne povezave, pri Katzovem algoritmu pa celotno pomembnost prenesemo na povezana vozlišča. To je vidno s primerjavo ranga vozlišča, ki je na levem grafu označen z rangom 23 na desnem pa z 8. Googlov pagerank da temu vozlišču večjo rangiranost zaradi povezanosti z drugim najpomembnejšim vozliščem, t.j. 32, Katzova središčnost pa gleda splošno povezanost, zato je rangiranost med manjšimi. 
 
 \begin{figure}[h]
 \begin{center} 
 \includegraphics[width=6cm]{O_graph1.png}
 \includegraphics[width=6cm]{O_graph2.png}
-\caption[Razvrstitev pomembnosti vozlišč v malo večjem grafu]{Razvrstitev pomembnosti vozlišč v malo večjem grafu z Googlovim PageRank algoritmom na levi in Katzovim algoritmom na desni.}
+\caption[Razvrstitev pomembnosti vozlišč v malo večjem grafu]{Razvrstitev pomembnosti vozlišč v malo večjem grafu z Googlovim PageRank algoritmom (levo) in Katzovim algoritmom (desno).}
 \end{center}
 \end{figure}
 
-Opazimo, da z obema algoritmoma na zunanjih vozliščih dobimo nižji rank, najpomembnejši vozlišči pa enako določita.
+Opazimo, da z obema algoritmoma na zunanjih vozliščih dobimo nižji rang, torej manj pomembna vozlišča,  najpomembnejši 2 vozlišči sta pa enaki. 
 
-\subsection{Največji graf}
+
+\subsection{Facebook graf}
+Algoritma sva preizkusili tudi na Facebook grafu, na katerem sva oba že prej testirali. Pri enaki toleranci kot pri manjših grafih je Katz zaključil po 741 iteracijah ($\alpha = 0.006$), pagerank pa po 1033 ($\alpha = 0.99$) z ujemanjem ranga le na dveh vozliščih. Do malo večjega ujemanja lahko pridemo s popravljanjem parametra $\alpha$, ampak so ta ujemanja še vedno na manj kot 10 vozliščih.
+
+
+\subsection{Sklep}
+Katzovo središčnost in Googlov pagerank je na primerih težko primerjati, saj delujeta na drugačen način. Katzova središčnost meri povezanost izbranega vozlišča z ostalimi, medtem ko Googlov pagerank meri pomembnost z obteženostjo sosednjih povezav. 
+
+Algorima se na manjših, manj povezanih grafih lahko ujemata na večih vozliščih, pri večjih grafih pa bo zaradi različnega pristopa prišlo do vse večjih razlik. Katz je bil na izbranih grafih večinsko hitrejši od pageranka, razlog je poleg dodatnega računanja Google matrike tudi v izbiri $\alpha = 0.99$, ki precej oteži čas računanja. 
+
+Obe metodi sta časovno in vsebinsko še dodatno prilagodljivi z določitvijo parametrov, zato bi splošno bi za neko iskano mero središčnosti izbrali algoritem, ki bolj ustreza našemu namenu. 
+ 
 \end{document}
