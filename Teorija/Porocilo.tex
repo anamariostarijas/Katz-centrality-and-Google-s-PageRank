@@ -17,6 +17,7 @@
 \usepackage{caption}
 \captionsetup[figure]{name=Slika}
 \usepackage[normalem]{ulem}
+\usepackage{hyperref}
 
 \textwidth 15cm
 \textheight 24cm
@@ -277,7 +278,7 @@ Uporabljali sva \textit{Facebook graf}, ki vsebuje $4039$ vozlišč in $88234$ p
 \end{figure}
 
 \subsection{Katzova središčnost}
-\subsection{Izbira parametra $\beta$}
+\subsubsection{Izbira parametra $\beta$}
 Pri izračunu Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Dana konstanta $\beta$ je začetna središčnost za vsa vozlišča, zato je vektor s konstantami $\beta$ naš začetni vektor pri potenčni metodi. Pogledali sva si primera, ko je $\beta =1$ in $\beta =50,$ pri fiksnem $\alpha = 0.003$. Spodaj b0omo videli, da je to dobra izbira $\alpha.$
 
 \begin{lstlisting}[language=Python]
@@ -321,8 +322,8 @@ Opazimo, da parameter $\beta$ ne vpliva na rezultat algoritma, samo število ite
 
 Vidimo, da število iteracij naraste iz 15 na 25, medtem ko beta povečamo za 1000. Tudi trajanje algoritma se vseskozi giblje okoli 0.5 sekunde, torej parameter $\beta$ res nima znatnega vpliva na algoritem.
 
-\subsection{Izbira parametra $\alpha$}
-Pri preveliki izbiri $\alpha$ lahko algoritem divergira. Vemo, da mora biti $\alpha$ manjša od inverzne vrednosti največje lastne vrednosti. V našem primeru je največja lastna vrednost 162.37394233563828, torej za $\alpha$ velja omejitev $\alpha < 1/162.37 \doteq 0.00616.$ Poglejmo kaj se zgodi, če je $\alpha = 0.0062.$
+\subsubsection{Izbira parametra $\alpha$}
+Pri izbiri prevelikega $\alpha$ lahko algoritem divergira. Vemo, da mora biti $\alpha$ manjša od inverzne vrednosti največje lastne vrednosti. V našem primeru je največja lastna vrednost 162.37394233563828, torej za $\alpha$ velja omejitev $\alpha < 1/162.37 \doteq 0.00616.$ Poglejmo kaj se zgodi, če je $\alpha = 0.0062.$
 
 \begin{lstlisting}[language=Python]
 r1 = katz(G_fb, 10000000, 0.01, 0.0062, 1)
@@ -503,5 +504,14 @@ Katzovo središčnost in Googlov pagerank je na primerih težko primerjati, saj 
 Algorima se na manjših, manj povezanih grafih lahko ujemata na večih vozliščih, pri večjih grafih pa bo zaradi različnega pristopa prišlo do vse večjih razlik. Katz je bil na izbranih grafih večinsko hitrejši od pageranka, razlog je poleg dodatnega računanja Google matrike tudi v izbiri $\alpha = 0.99$, ki precej oteži čas računanja. 
 
 Obe metodi sta časovno in vsebinsko še dodatno prilagodljivi z določitvijo parametrov, zato bi splošno bi za neko iskano mero središčnosti izbrali algoritem, ki bolj ustreza našemu namenu. 
+
+\begin{thebibliography}{99}
+\bibitem{referenca-knjiga}
+ L. ~Elden, \emph{Matrix Methods in Data Mining and Pattern Recognition}, Linkoping, Sweden: Linkoping University, 2007.
+ \bibitem{referenca-spletni-vir}
+ J. ~Leskovec in A. ~Krevlj, \emph{SNAP Datasets: Large network}, 2014, [ogled 30.12.2018], dostopno na: \url{http://snap.stanford.edu/data}.
+ \bibitem{referenca-spletni-vir}
+ A. ~Disney, \emph{EigenCentrality and PageRank}, 2015, [ogled 2.1.2019], dostopno na: \url{https://cambridge-intelligence.com/eigencentrality-pagerank}
  
+\end{thebibliography}
 \end{document}
