@@ -279,7 +279,7 @@ Uporabljali sva \textit{Facebook graf}, ki vsebuje $4039$ vozlišč in $88234$ p
 
 \subsection{Katzova središčnost}
 \subsubsection{Izbira parametra $\beta$}
-Pri izračunu Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Dana konstanta $\beta$ je začetna središčnost za vsa vozlišča, zato je vektor s konstantami $\beta$ naš začetni vektor pri potenčni metodi. Pogledali sva si primera, ko je $\beta =1$ in $\beta =50,$ pri fiksnem $\alpha = 0.003$. Spodaj b0omo videli, da je to dobra izbira $\alpha.$
+Pri izračunu Katzove središčnosti uporabimo dve dani konstanti $\alpha$ in $\beta.$ Dana konstanta $\beta$ je začetna središčnost za vsa vozlišča, zato je vektor s konstantami $\beta$ naš začetni vektor pri potenčni metodi. Pogledali sva si primera, ko je $\beta =1$ in $\beta =50,$ pri fiksnem $\alpha = 0.003$. Spodaj bomo videli, da je to dobra izbira za $\alpha.$
 
 \begin{lstlisting}[language=Python]
 b1 = katz(G_fb, 10000000, 0.01, 0.003, 1)
@@ -388,7 +388,7 @@ Poglejmo si graf zahtevnosti algoritma Katzove središčnosti v odvisnosti od $\
 
 Vidimo, da število iteracij z večanjem konstante $\alpha$ zelo počasi narašča, ko pa se $\alpha$ približuje zgornji omejitvi, pa število iteracij eksponentno zraste.
 Za primerjavo algoritma Katzove središčnosti z algoritmom PageRank bomo vzeli $\alpha = 0.003$, pri katerem algoritem potrebuje $15$ iteracij in $0.4$ sekunde ter $\beta = 1.$
-\pagebreak
+%\pagebreak
 \subsection{Googlov PageRank}
 \subsubsection{Izbira parametra $\alpha$} 
 Vemo, da manjši ko je $\alpha$, več podatkov o omrežju izgubimo. Torej želimo, da je ta parameter čim večji. 
